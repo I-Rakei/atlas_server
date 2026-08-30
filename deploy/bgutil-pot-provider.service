@@ -1,0 +1,16 @@
+[Unit]
+Description=bgutil yt-dlp PO token provider
+After=network.target
+
+[Service]
+# Adjust to wherever you cloned bgutil-ytdlp-pot-provider (the server/ subfolder).
+WorkingDirectory=/opt/bgutil-ytdlp-pot-provider/server
+# Adjust if `node` isn't at this path (check `which node` as the deploy user).
+ExecStart=/usr/bin/node build/main.js
+Restart=on-failure
+RestartSec=5
+User=atlas
+Group=atlas
+
+[Install]
+WantedBy=multi-user.target
