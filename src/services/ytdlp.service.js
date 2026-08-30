@@ -83,26 +83,7 @@ export async function getTrackInfo(videoId) {
   };
 }
 
-// Resolve a direct googlevideo URL for Mode A streaming.
-export async function resolveDirectUrl(videoId) {
-  const args = [
-    ...baseArgs(),
-    '-f',
-    '140/bestaudio[ext=m4a]/bestaudio',
-    '-g',
-    `https://www.youtube.com/watch?v=${videoId}`,
-    '--no-warnings',
-    '--no-playlist',
-  ];
-  const { stdout } = await runCapture(args, { timeoutMs: 20000 });
-  const url = stdout.trim().split('\n').pop();
-  if (!url || !url.startsWith('http')) {
-    throw mapYtdlpError('Video unavailable');
-  }
-  return url;
-}
-
-// Spawn yt-dlp streaming bestaudio to stdout for Mode B transcode fallback.
+// Spawn yt-dlp streaming bestaudio to stdout, piped through ffmpeg by stream.service.js.
 export function spawnAudioStream(videoId) {
   const args = [...baseArgs(), '-f', 'bestaudio', '-o', '-', `https://www.youtube.com/watch?v=${videoId}`, '--no-warnings', '--no-playlist'];
   const child = spawn(config.ytdlpPath, args, { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
